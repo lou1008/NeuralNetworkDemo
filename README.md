@@ -30,7 +30,7 @@ git clone https://github.com/lou1008/NeuralNetworkDemo.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuralNetworkDemo
+cd NeuralNetworkDemo/NeuralNetworkDemo
 dotnet run
 ```
 
