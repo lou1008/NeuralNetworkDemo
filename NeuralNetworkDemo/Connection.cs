@@ -1,0 +1,6 @@
+namespace NeuralNetworkDemo;
+
+class Connection()
+{
+    
+}

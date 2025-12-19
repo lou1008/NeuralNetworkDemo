@@ -2,6 +2,11 @@ namespace NeuralNetworkDemo;
 class Neuron
 {
     private double value;
+
+    public Neuron()
+    {
+    }
+
     public Neuron(double value)
     {
         Console.WriteLine("New neuron created");
