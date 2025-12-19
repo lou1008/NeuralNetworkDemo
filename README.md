@@ -17,12 +17,13 @@ I'm working on it right now. It hasn't done anything yet, except for saying some
 
 - .NET SDK 10.0 or newer
   (Try to use it with lower versions i havened tested it yet)
+  [Download for Windows](https://dotnet.microsoft.com/en-us/download)
 
 # Getting Started
 
 How to run the Project:
 
-## Linux & MacOS
+## Linux & MacOS & Windows
 
 Clone the Repository:
 ```
@@ -30,8 +31,6 @@ git clone https://github.com/lou1008/NeuralNetworkDemo.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuralNetworkDemo
+cd NeuralNetworkDemo/NeuralNetworkDemo
 dotnet run
 ```
-
-## Windows
