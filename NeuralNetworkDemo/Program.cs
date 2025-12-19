@@ -6,7 +6,6 @@ partial class Program
 {
     static void Main()
     {
-        int[] testmenge = new int[] { 1, 5, 9, 7 };
         int UserOutput;
         bool Error;
         do {
@@ -21,7 +20,7 @@ partial class Program
             }
             switch (UserOutput) {
                 case 1:
-                    CreateNeuralNetwork(testmenge);
+                    CreateNeuralNetwork();
                     break;
                 default:
                     Console.WriteLine("Please type in one of the shown options");
@@ -33,5 +32,3 @@ partial class Program
         } while (Error);
     }
 }
-
-
