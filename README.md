@@ -1,4 +1,4 @@
-# NeuralNetworkDemo
+# NeuroNet
 
 I wanted to add a Repository und I am motivated to make a Neural Network. Thats why this exists. I have no Idea what the Neural Network should do ;) It's my first Repo
 
@@ -27,10 +27,10 @@ How to run the Project:
 
 Clone the Repository:
 ```
-git clone https://github.com/lou1008/NeuralNet.git
+git clone https://github.com/lou1008/NeuroNet.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuralNet/src/
+cd NeuroNet/src/
 dotnet run
 ```
