@@ -27,10 +27,10 @@ How to run the Project:
 
 Clone the Repository:
 ```
-git clone https://github.com/lou1008/NeuralNetworkDemo.git
+git clone https://github.com/lou1008/NeuralNet.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuralNetworkDemo/NeuralNetworkDemo
+cd NeuralNet/src/
 dotnet run
 ```

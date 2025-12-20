@@ -61,5 +61,18 @@ public static void CreateNeuralNetwork()
                 Console.WriteLine("New Neuron");
             }
         }
+        Console.WriteLine("Neural Network created with " + layers + " layers.");
+        Console.WriteLine("Do you want to save this Neural Network? (y/n)");
+        string saveResponse = Console.ReadLine() ?? string.Empty;
+        if(saveResponse.ToLower() == "y")
+        {
+            Console.WriteLine("How do you name the Neural Network?");
+            string nnName = Console.ReadLine() ?? "NeuralNetwork";
+            Console.WriteLine("This feature is not yet implemented, so the Neural Network will not actually be saved.");
+        }
+        else
+        {
+            Console.WriteLine("Neural Network not saved.");
+        }
     }
 }
