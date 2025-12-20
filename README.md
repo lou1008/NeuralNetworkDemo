@@ -27,7 +27,7 @@ How to run the Project:
 
 Clone the Repository:
 ```
-git clone https://github.com/lou1008/NeuroNet.git
+git clone https://github.com/aichlou/NeuroNet.git
 ```
 Go into the folder and start the Programm
 ```
