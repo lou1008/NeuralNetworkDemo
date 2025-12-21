@@ -24,6 +24,7 @@ git clone https://github.com/aichlou/NeuroNet.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuroNet/src/
+cd NeuroNet
+cd src
 dotnet run
 ```
