@@ -39,8 +39,15 @@ partial class Program
                     else
                     {
                         Console.WriteLine("Failed to load Neural Network.");
+                        Error = true;
+                        break;
                     }
-                    List<List<Neuron>>? network = JsonSerializer.Deserialize<List<List<Neuron>>>(networkData);
+                    List<List<Neuron>>? network = JsonSerializer.Deserialize<List<List<Neuron>>>(networkData); //Funktioniert nicht
+                    Console.WriteLine("Neural Network Structure:");
+                    foreach (var layer in network!)
+                    {
+                        Console.WriteLine("Layer with " + layer.Count + " neurons.");
+                    }
                     break;
                 default:
                     Console.WriteLine("Please type in one of the shown options");

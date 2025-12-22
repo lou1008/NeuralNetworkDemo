@@ -38,7 +38,19 @@ public static void CreateNeuralNetwork()
         for (int i = 0; i < layers; i++) 
         {
             network.Add(new List<Neuron>());
-            Console.WriteLine("How many neurons would you like in layer " + (i + 1) + "?");
+            Console.Write("How many neurons would you like in layer " + (i + 1) + "?");
+            if (i == 0)
+            {
+                Console.WriteLine(" (Input Layer)");
+            }
+            else if (i == layers - 1)
+            {
+                Console.WriteLine(" (Output Layer)");
+            }
+            else
+            {
+                Console.WriteLine();
+            }
             int neuronCount = 0;
             do {
                 Error = false;
