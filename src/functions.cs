@@ -1,4 +1,4 @@
-namespace NeuralNetworkDemo;
+namespace NeuroNet;
 
 public static class Functions
 {

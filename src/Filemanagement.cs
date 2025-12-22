@@ -1,4 +1,4 @@
-namespace NeuralNetworkDemo;
+namespace NeuroNet;
 
 using System.Data;
 using System.Text.Json;

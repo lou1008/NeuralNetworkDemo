@@ -1,7 +1,7 @@
 using System.Data;
 using System.Text.Json;
 
-namespace NeuralNetworkDemo;
+namespace NeuroNet;
 
 public static class Main
 {
