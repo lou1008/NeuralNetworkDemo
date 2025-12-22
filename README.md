@@ -1,6 +1,6 @@
 # NeuroNet
 
-I wanted to add a Repository und I am motivated to make a Neural Network. Thats why this exists. I have no Idea what the Neural Network should do ;) It's my first Repo
+I wanted to add a Repository und I'm motivated to make a Neural Network. Thats why this exists. It can create Networks and runs them. You can use an API to send and get data from and to the netw ;) It's my first Repo
 
 # Stage of the Project
 
@@ -11,6 +11,7 @@ I'm working on it right now. It can create neural networks, but running them? No
 - .NET SDK 10.0 or newer
   (Try to use it with lower versions i havened tested it yet)
   [Download for Windows](https://dotnet.microsoft.com/en-us/download)
+- Git [Download for Windows](https://gitforwindows.org/)
 
 # Getting Started
 
@@ -24,7 +25,6 @@ git clone https://github.com/aichlou/NeuroNet.git
 ```
 Go into the folder and start the Programm
 ```
-cd NeuroNet
-cd src
+cd NeuroNet/src
 dotnet run
 ```
