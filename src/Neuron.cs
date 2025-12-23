@@ -1,5 +1,5 @@
 namespace NeuroNet;
-class Neuron
+public class Neuron
 {
     public double bias;
     public double[] weights;
