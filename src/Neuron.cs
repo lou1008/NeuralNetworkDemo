@@ -16,6 +16,10 @@ public class Neuron
         this.weights = weights;
         this.value = 0;
     }
+    public void EditWeights(double[] newWeights)
+    {
+        this.weights = newWeights;
+    }
     public double Fire(double[] inputs)
     {
         if (inputs.Length != weights.Length)

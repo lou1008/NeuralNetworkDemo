@@ -72,8 +72,13 @@ public static void CreateNeuralNetwork()
             } while (Error);
             for (int j = 0; j < neuronCount; j++)
             {
-                network[i].Add(new Neuron(0,[0]));
-                Console.WriteLine("New Neuron");
+                if(i == 0)
+                {
+                    network[i].Add(new Neuron(0, [0]));
+                }
+                else {
+                    network[i].Add(new Neuron(0, new double[network[i - 1].Count]));
+                }
             }
         }
         Console.WriteLine("Neural Network created with " + layers + " layers.");
