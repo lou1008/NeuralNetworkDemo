@@ -15,13 +15,9 @@ namespace NeuroNet
             Console.WriteLine("Loading Neural Network...");
             ListSavedNetworks();
             Console.WriteLine("Please type in the name of the Neural Network you would like to load:");
-            string nnName = Console.ReadLine() ?? "MyNeuralNetwork";
-            string networkData = Filemanagement.LoadNetworkFromFile(nnName);
-            if (!string.IsNullOrEmpty(networkData))
-            {
-                Console.WriteLine("Neural Network loaded successfully.");
-            }
-            else
+            string? nnName = Console.ReadLine();
+            string networkData = Nameof(nnName);
+            if (string.IsNullOrEmpty(networkData))
             {
                 Console.WriteLine("Failed to load Neural Network.");
                 return new MultipleValues<List<List<Neuron>>>
@@ -31,10 +27,11 @@ namespace NeuroNet
                     ErrorMessage = "Failed to load Neural Network."
                 };
             }
-            List<List<Neuron>>? network;
+            List<List<NeuronDto>>? networkDto;
             try
             {
-                network = JsonSerializer.Deserialize<List<List<Neuron>>>(networkData);
+                var file = JsonSerializer.Deserialize<FileDto>(networkData) ?? throw new Exception("Deserialized file is null."); // I don't like this but it works for now
+                networkDto = file.Network;
             }
             catch (Exception e)
             {
@@ -45,8 +42,9 @@ namespace NeuroNet
                     HasError = true,
                     ErrorMessage = "Deserialization Error."
                 };
-
             }
+            List<List<Neuron>>? network = networkDto?.Select(layer => layer.Select(neuronDto => neuronDto.ToNeuron()).ToList()).ToList();
+
             for(int i=0; i < network!.Count; i++)
             {
                 for(int j=0; j < network[i].Count; j++)

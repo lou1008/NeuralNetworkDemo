@@ -38,8 +38,14 @@ public static class Filemanagement
             index++;
         }
     }
-    public static string LoadNetworkFromFile(string nnName)
+    public static string Nameof(string? nnName)
     {
+        if (string.IsNullOrEmpty(nnName))
+        {
+            Console.WriteLine("Neural Network name cannot be empty.");
+            return string.Empty;
+        }
+
         if (int.TryParse(nnName, out _))
         {
             string[] files = Directory.GetFiles(appDataPath, "*.nn");
@@ -55,11 +61,7 @@ public static class Filemanagement
         {
             nnName = nnName.Trim();
         }
-        if (string.IsNullOrEmpty(nnName))
-        {
-            Console.WriteLine("Neural Network name cannot be empty.");
-            return string.Empty;
-        }
+
         if (!Directory.Exists(appDataPath))
         {
             Console.WriteLine("No saved Neural Networks found.");
@@ -69,6 +71,7 @@ public static class Filemanagement
         {
             nnName = nnName.Trim();
         }
+
         string filePath = Path.Combine(appDataPath, nnName + ".nn");
         if (File.Exists(filePath))
         {
@@ -121,10 +124,13 @@ public static class Filemanagement
         string contentJson = JsonSerializer.Serialize(dtoNetwork);
         Console.WriteLine($"Debug: JSON Original: {JsonSerializer.Serialize(network)}");
         Console.WriteLine($"Debug: Content JSON: {contentJson}");
+        string baseDir = AppContext.BaseDirectory;
+        Console.WriteLine($"Debug: Base Directory: {baseDir}");
+        string appVersionPath = Path.Combine(baseDir, "../../../AppVersion.json"); //Maybee add another ../
         string versionInfo =
                 JsonSerializer
                     .Deserialize<Dictionary<string, string>>(
-                        File.ReadAllText("../../../AppVersion.json")
+                        File.ReadAllText(appVersionPath)
                     )?["version"]
                 ?? "Unknown Version";
         var metadata = new
@@ -141,5 +147,10 @@ public static class Filemanagement
         string metadataJson = JsonSerializer.Serialize(metadata);
         string combinedJson = "{ \"Metadata\": " + metadataJson + ", \"Network\": " + contentJson + " }";
         Filemanagement.SaveNetworkToFile(nnName, combinedJson);
+    }
+    public class FileDto
+    {
+        public List<object>? Metadata { get; set; }
+        public List<List<NeuronDto>>? Network { get; set; }
     }
 }

@@ -4,12 +4,6 @@ public class Neuron
     public double bias;
     public double[] weights;
     public double value;
-    public Neuron()
-    {
-        this.bias = 0;
-        this.weights = Array.Empty<double>();
-        this.value = 0;
-    }
     public Neuron(double bias, double[] weights)
     {
         this.bias = bias;
@@ -61,5 +55,8 @@ public class NeuronDto
     public double? bias { get; set; }
     public double[]? weights { get; set; }
 
-
+    public Neuron ToNeuron()
+    {
+        return new Neuron(this.bias ?? 0, this.weights ?? Array.Empty<double>());
+    }
 }
