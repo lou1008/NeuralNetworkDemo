@@ -5,7 +5,8 @@ namespace NeuroNet;
 
 public static class Main
 {
-public static void CreateNeuralNetwork()
+
+public static List<List<Neuron>> CreateNeuralNetwork()
     {
         string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
@@ -94,5 +95,6 @@ public static void CreateNeuralNetwork()
         {
             Console.WriteLine("Neural Network not saved.");
         }
+        return network;
     }
 }

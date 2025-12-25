@@ -4,12 +4,13 @@ using static NeuroNet.Main;
 using static NeuroNet.Filemanagement;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
+using MeuroNet;
 
 namespace NeuroNet
 {
     public static class LoadNetwork
     {
-        public static bool LoadNeuralNetwork(bool Error = false)
+        public static MultipleValues<List<List<Neuron>>> LoadNeuralNetwork()
         {
             Console.WriteLine("Loading Neural Network...");
             ListSavedNetworks();
@@ -23,8 +24,12 @@ namespace NeuroNet
             else
             {
                 Console.WriteLine("Failed to load Neural Network.");
-                Error = true;
-                return Error;
+                return new MultipleValues<List<List<Neuron>>>
+                {
+                    Value = null!,
+                    HasError = true,
+                    ErrorMessage = "Failed to load Neural Network."
+                };
             }
             List<List<Neuron>>? network;
             try
@@ -55,8 +60,13 @@ namespace NeuroNet
                         Console.WriteLine("Failed to open browser: " + ex.Message);
                     }
                 }
-                Error = true;
-                return Error;
+                return new MultipleValues<List<List<Neuron>>>
+                {
+                    Value = null!,
+                    HasError = true,
+                    ErrorMessage = "Deserialization Error."
+                };
+
             }
             for(int i=0; i < network!.Count; i++)
             {
@@ -79,7 +89,12 @@ namespace NeuroNet
             {
                 Console.WriteLine("Layer with " + layer.Count + " neurons.");
             }
-            return Error;
+            return new MultipleValues<List<List<Neuron>>>
+            {
+                Value = network,
+                HasError = false,
+                ErrorMessage = string.Empty
+            };
         }
     }
 }

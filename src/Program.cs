@@ -10,7 +10,7 @@ using static NeuroNet.Filemanagement;
 
 int UserOutput;
 bool Error;
-List<List<Neuron>>? LoadedNetwork;
+List<List<Neuron>>? LoadedNetwork = null;
 do
 {
     Error = false;
@@ -27,39 +27,77 @@ do
     switch (UserOutput)
     {
         case 1:
-            CreateNeuralNetwork();
+            LoadedNetwork = CreateNeuralNetwork();
             break;
         case 2:
-            Error = LoadNeuralNetwork();
+            var result = LoadNeuralNetwork();
+            if (result.HasError)
+            {
+                Error = true;
+            }
+            else
+            {
+                LoadedNetwork = result.Value;
+            }
             break;
         default:
             Console.WriteLine("Please type in one of the shown options");
             Error = true;
             break;
     }
-    Console.WriteLine("Press any key to continue...");
-    Console.ReadKey();
 } while (Error);
+
+if (!Console.IsInputRedirected)
+{   Console.WriteLine("Press any key to continue...");
+    Console.ReadKey();
+}
+else
+{
+    Console.WriteLine("Input is redirected, Press Enter to continue...");
+    Console.Read(); //This is to prevent errors when input is redirected
+}
 
 Console.WriteLine("Do you want to run the Neural Network now? (y/n)");
 if(Console.ReadLine()!.ToLower() == "y")
 {
     List<double> inputData = new List<double>();
-    // TODO: Anzeigen wie viele Inputs benötigt werden basierend auf der Input Layer
-    Console.WriteLine("Please enter input data separated by commas (e.g., 0.5,0.2,0.8):");
-    string? inputLine = Console.ReadLine();
-    if (!string.IsNullOrEmpty(inputLine))
-    {
-        inputData = inputLine.Split(',').Select(s => double.Parse(s.Trim())).ToList();
+    int InputLenght = LoadedNetwork![0].Count;
+    do {
+        Error = false;
+        Console.WriteLine($"You have to Input {InputLenght} Values.");
+        Console.WriteLine("Please enter input data separated by commas (e.g., 0.5,0.2,0.8):");
+        string? inputLine = Console.ReadLine();
+        if (!string.IsNullOrEmpty(inputLine))
+        {
+            try {
+                inputData = inputLine.Split(',').Select(s => double.Parse(s.Trim())).ToList();
+                if(inputData.Count != InputLenght)
+                {
+                    Console.WriteLine($"Invalid number of inputs. Expected {InputLenght} values.");
+                    Console.WriteLine($"You entered {inputData.Count} values.");
+                    Console.Write("Press any key to continue...");
+                    Console.ReadKey();
+                    Error = true;
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Invalid input format. Please ensure you enter numbers separated by commas.");
+                Console.Write("Press any key to continue...");
+                Console.ReadKey();
+                Error = true;
+            }
+        }
+        else
+        {
+            string defaultInput = string.Join(",", Enumerable.Repeat("0.0", InputLenght));
+            Console.WriteLine("No input data provided. Using default input data: " + defaultInput);
+            inputData = new List<double>(Enumerable.Repeat(0.0, InputLenght));
+        }
     }
-    else
-    {
-        Console.WriteLine("No input data provided. Using default input data: 0.0, 0.0, 0.0");
-        inputData = new List<double> { 0.0, 0.0, 0.0 };
-    }
-    RunNeuralNetwork(LoadedNetwork!, inputData); //WHY DOES IT THROWS AN ERROR HERE???? GRRRRRR
+    while(Error);
+    RunNeuralNetwork(LoadedNetwork!, inputData);
+    Console.WriteLine("Running Neural Network...");
 }
-Console.WriteLine("Running Neural Network...");
-
 Console.WriteLine("Exiting Program...");
 Console.ReadKey();

@@ -52,5 +52,10 @@ public static class RunNetwork
                 }
             }
         }
+        Console.WriteLine("Neural Network Output:");
+        for (int j = 0; j < network[network.Count - 1].Count; j++)
+        {
+            Console.WriteLine($"Neuron {j + 1}: {network[network.Count - 1][j].value}");
+        }
     }
 }
