@@ -1,12 +1,12 @@
-namespace NeuroNet;
-
-using System.Data;
 using System.Text.Json;
 
-public static class Filemanagement
+namespace NeuroNet.Core;
+
+class Save
 {
     static string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     static string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
+
     public static void SaveNetworkToFile(string nnName, string jsonData)
     {
         if (!Directory.Exists(appDataPath))
@@ -17,72 +17,7 @@ public static class Filemanagement
         File.WriteAllText(filePath, jsonData);
         Console.WriteLine("Neural Network saved as " + nnName);
     }
-    public static void ListSavedNetworks()
-    {
-        if (!Directory.Exists(appDataPath))
-        {
-            Console.WriteLine("No saved Neural Networks found.");
-            return;
-        }
-        string[] files = Directory.GetFiles(appDataPath, "*.nn");
-        if (files.Length == 0)
-        {
-            Console.WriteLine("No saved Neural Networks found.");
-            return;
-        }
-        Console.WriteLine("Saved Neural Networks:");
-        int index = 1;
-        foreach (string file in files)
-        {
-            Console.WriteLine(index + ". " + Path.GetFileNameWithoutExtension(file));
-            index++;
-        }
-    }
-    public static string Nameof(string? nnName)
-    {
-        if (string.IsNullOrEmpty(nnName))
-        {
-            Console.WriteLine("Neural Network name cannot be empty.");
-            return string.Empty;
-        }
 
-        if (int.TryParse(nnName, out _))
-        {
-            string[] files = Directory.GetFiles(appDataPath, "*.nn");
-            int fileIndex = int.Parse(nnName) - 1;
-            if (fileIndex < 0 || fileIndex >= files.Length)
-            {
-                Console.WriteLine("Invalid Neural Network selection.");
-                return string.Empty;
-            }
-            nnName = Path.GetFileNameWithoutExtension(files[fileIndex]);
-        }
-        else
-        {
-            nnName = nnName.Trim();
-        }
-
-        if (!Directory.Exists(appDataPath))
-        {
-            Console.WriteLine("No saved Neural Networks found.");
-            return string.Empty;
-        }
-        else
-        {
-            nnName = nnName.Trim();
-        }
-
-        string filePath = Path.Combine(appDataPath, nnName + ".nn");
-        if (File.Exists(filePath))
-        {
-            return File.ReadAllText(filePath);
-        }
-        else
-        {
-            Console.WriteLine("Neural Network file not found: " + nnName);
-            return string.Empty;
-        }
-    }
     public static void SaveNetwork(string nnName, List<List<Neuron>> network, string status)
     {
         if (status == "new" && File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
@@ -126,7 +61,7 @@ public static class Filemanagement
         Console.WriteLine($"Debug: Content JSON: {contentJson}");
         string baseDir = AppContext.BaseDirectory;
         Console.WriteLine($"Debug: Base Directory: {baseDir}");
-        string appVersionPath = Path.Combine(baseDir, "../../../AppVersion.json"); //Maybee add another ../
+        string appVersionPath = Path.Combine(baseDir, "../../../../AppVersion.json"); //Maybee add another ../
         string versionInfo =
                 JsonSerializer
                     .Deserialize<Dictionary<string, string>>(
@@ -146,11 +81,6 @@ public static class Filemanagement
 
         string metadataJson = JsonSerializer.Serialize(metadata);
         string combinedJson = "{ \"Metadata\": " + metadataJson + ", \"Network\": " + contentJson + " }";
-        Filemanagement.SaveNetworkToFile(nnName, combinedJson);
-    }
-    public class FileDto
-    {
-        public List<object>? Metadata { get; set; }
-        public List<List<NeuronDto>>? Network { get; set; }
+        SaveNetworkToFile(nnName, combinedJson);
     }
 }

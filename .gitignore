@@ -1,3 +1,5 @@
-/src/obj
-/src/bin
-/todo/
+/src/NeuroNet.CLI/obj
+/src/NeuroNet.CLI/bin
+/src/NeuroNet.Core/obj
+/src/NeuroNet.Core/bin
+/todo

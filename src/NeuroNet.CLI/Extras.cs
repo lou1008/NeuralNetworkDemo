@@ -1,6 +1,6 @@
-namespace NeuroNet;
+namespace NeuroNet.CLI;
 
-public static class Continue
+class Extras
 {
     public static void PressKey()
     {

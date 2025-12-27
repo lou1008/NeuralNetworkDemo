@@ -1,11 +1,6 @@
-using System.Data;
-using System.Text.Json;
+namespace NeuroNet.Core;
 
-namespace NeuroNet;
-
-public static class Main
-{
-
+public class Create {
 public static List<List<Neuron>> CreateNeuralNetwork()
     {
         string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -89,7 +84,7 @@ public static List<List<Neuron>> CreateNeuralNetwork()
         {
             Console.WriteLine("How do you name the Neural Network?");
             string nnName = Console.ReadLine() ?? "MyNeuralNetwork";
-            Filemanagement.SaveNetwork(nnName, network, "new");
+            Save.SaveNetwork(nnName, network, "new");
             Console.WriteLine("Neural Network saved as " + nnName);
         }
         else

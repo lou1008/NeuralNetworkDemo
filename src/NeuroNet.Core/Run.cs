@@ -1,6 +1,6 @@
-namespace NeuroNet;
+namespace NeuroNet.Core;
 
-public static class RunNetwork
+public class Run
 {
     public static void RunNeuralNetwork(List<List<Neuron>> network, List<double> inputData)
     {

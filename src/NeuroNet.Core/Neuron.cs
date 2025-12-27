@@ -1,7 +1,8 @@
-namespace NeuroNet;
+namespace NeuroNet.Core;
+
 public class Neuron
 {
-    public double bias;
+   public double bias;
     public double[] weights;
     public double value;
     public Neuron(double bias, double[] weights)
@@ -27,7 +28,7 @@ public class Neuron
             totalInput += inputs[i] * weights[i];
         }
 
-        value = Functions.sigmoid(totalInput);
+        value = sigmoid(totalInput);
         return value;
     }
     public void RandomizeWeights(Random rand, double minValue = -1.0, double maxValue = 1.0)
@@ -47,7 +48,13 @@ public class Neuron
             weights = this.weights
         };
     }
+    public static double sigmoid(double x)
+    {
+        return 1 / (1 + Math.Exp(-x));
+    }
 }
+
+
 
 public class NeuronDto
 {
