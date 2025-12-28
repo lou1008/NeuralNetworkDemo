@@ -5,10 +5,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
         int UserOutput;
         bool Error;
         List<List<Neuron>>? LoadedNetwork = null;
+        string? currentnnName = null;
         do
         {
             
@@ -26,10 +26,12 @@ class Program
             switch (UserOutput)
             {
                 case 1:
-                    LoadedNetwork = Create.CreateNeuralNetwork();
+                    var OutputCreate = Create.CreateNeuralNetwork(Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
+                    LoadedNetwork = OutputCreate.Value1;
+                    currentnnName = OutputCreate.Value2;
                     break;
                 case 2:
-                    var result = Load.LoadNeuralNetwork();
+                    var result = Load.LoadNeuralNetwork(Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
                     if (result.HasError)
                     {
                         Error = true;
@@ -87,7 +89,13 @@ class Program
                 }
             }
             while(Error);
-            Run.RunNeuralNetwork(LoadedNetwork!, inputData);
+            Edit.RandomizeIfNeeded(LoadedNetwork!, (message) => Console.WriteLine(message));
+            Console.WriteLine("Do you want to save randomized weights and biases? (y/n)");
+            if(Console.ReadLine()!.ToLower() == "y")
+            {
+                Save.SaveNetwork("Emma" ,LoadedNetwork!, "overwrite", Console.WriteLine); // Hardcoded name for testing
+            }
+            Run.RunNeuralNetwork(LoadedNetwork!, inputData, (message) => Console.WriteLine(message));
             Console.WriteLine("Running Neural Network...");
         }
         Console.WriteLine("Exiting Program...");

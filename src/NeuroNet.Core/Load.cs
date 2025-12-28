@@ -7,18 +7,16 @@ public class Load {
     static string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     static string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
 
-    public static MultipleValues<List<List<Neuron>>> LoadNeuralNetwork()
+    public static MultipleValues<List<List<Neuron>>> LoadNeuralNetwork(Action<string>? Message = null, Func<string>? readInput = null)
         {
-            Console.WriteLine("Loading Neural Network...");
-            ListSavedNetworks();
-            Console.WriteLine("Please type in the name of the Neural Network you would like to load:");
-            string? nnName = Console.ReadLine();
-            //Console.WriteLine("Debug 1");
+            Message?.Invoke("Loading Neural Network...");
+            ListSavedNetworks(Message);
+            Message?.Invoke("Please type in the name of the Neural Network you would like to load:");
+            string? nnName = readInput?.Invoke();
             string networkData = Nameof(nnName);
-            //Console.WriteLine("Debug 2");
             if (string.IsNullOrEmpty(networkData))
             {
-                Console.WriteLine("Failed to load Neural Network.");
+                Message?.Invoke("Failed to load Neural Network.");
                 return new MultipleValues<List<List<Neuron>>>
                 {
                     Value = null!,
@@ -34,8 +32,8 @@ public class Load {
             }
             catch (Exception e)
             {
-                Console.WriteLine("A Error occurred while deserializing the Neural Network.");
-                GitHubReportIssue.ReportToGitHub("Failed to Load Neural Network", e.Message, e.StackTrace ?? "No stack trace available.", "Deserialization Error in LoadNeuralNetwork", true);
+                Message?.Invoke("A Error occurred while deserializing the Neural Network.");
+                GitHubReportIssue.ReportToGitHub("Failed to Load Neural Network", e.Message, e.StackTrace ?? "No stack trace available.", "Deserialization Error in LoadNeuralNetwork", true, Message, readInput);
                 return new MultipleValues<List<List<Neuron>>>
                 {
                     Value = null!,
@@ -60,10 +58,10 @@ public class Load {
                 }
             }
 
-            Console.WriteLine("Neural Network Structure:");
+            Message?.Invoke("Neural Network Structure:");
             foreach (var layer in network!)
             {
-                Console.WriteLine("Layer with " + layer.Count + " neurons.");
+                Message?.Invoke("Layer with " + layer.Count + " neurons.");
             }
             return new MultipleValues<List<List<Neuron>>>
             {
@@ -72,33 +70,33 @@ public class Load {
                 ErrorMessage = string.Empty
             };
         }
-        public static void ListSavedNetworks()
+        public static void ListSavedNetworks(Action<string>? Message = null)
     {
         if (!Directory.Exists(appDataPath))
         {
-            Console.WriteLine("No saved Neural Networks found.");
+            Message?.Invoke("No saved Neural Networks found.");
             return;
         }
         string[] files = Directory.GetFiles(appDataPath, "*.nn");
         if (files.Length == 0)
         {
-            Console.WriteLine("No saved Neural Networks found.");
+            Message?.Invoke("No saved Neural Networks found.");
             return;
         }
-        Console.WriteLine("Saved Neural Networks:");
+        Message?.Invoke("Saved Neural Networks:");
         int index = 1;
         foreach (string file in files)
         {
-            Console.WriteLine(index + ". " + Path.GetFileNameWithoutExtension(file));
+            Message?.Invoke(index + ". " + Path.GetFileNameWithoutExtension(file));
             index++;
         }
     }
 
-        public static string Nameof(string? nnName)
+        public static string Nameof(string? nnName, Action<string>? Message = null)
     {
         if (string.IsNullOrEmpty(nnName))
         {
-            Console.WriteLine("Neural Network name cannot be empty.");
+            Message?.Invoke("Neural Network name cannot be empty.");
             return string.Empty;
         }
 
@@ -108,7 +106,7 @@ public class Load {
             int fileIndex = int.Parse(nnName) - 1;
             if (fileIndex < 0 || fileIndex >= files.Length)
             {
-                Console.WriteLine("Invalid Neural Network selection.");
+                Message?.Invoke("Invalid Neural Network selection.");
                 return string.Empty;
             }
             nnName = Path.GetFileNameWithoutExtension(files[fileIndex]);
@@ -120,7 +118,7 @@ public class Load {
 
         if (!Directory.Exists(appDataPath))
         {
-            Console.WriteLine("No saved Neural Networks found.");
+            Message?.Invoke("No saved Neural Networks found.");
             return string.Empty;
         }
         else
@@ -135,7 +133,7 @@ public class Load {
         }
         else
         {
-            Console.WriteLine("Neural Network file not found: " + nnName);
+            Message?.Invoke("Neural Network file not found: " + nnName);
             return string.Empty;
         }
     }

@@ -2,15 +2,15 @@ namespace NeuroNet.Core;
 
 public static class GitHubReportIssue
 {
-    public static void ReportToGitHub(string title, string errorMessage, string stackTrace, string sidenote, bool UserExperience)
+    public static void ReportToGitHub(string title, string errorMessage, string stackTrace, string sidenote, bool UserExperience, Action<string>? Message = null, Func<string>? readInput = null)
     {
-        Console.WriteLine("Do you want to report the Issue to GitHub? (y/n)");
-        string reportChoice = Console.ReadLine() ?? "y";
+        Message?.Invoke("Do you want to report the Issue to GitHub? (y/n)");
+        string reportChoice = readInput?.Invoke() ?? "y";
         if (reportChoice.ToLower() == "y")
         {
-            Console.WriteLine("Please describe the issue you encountered:");
-            string userDescription = Console.ReadLine() ?? "";
-            Console.WriteLine("Opening GitHub Issues page...");
+            Message?.Invoke("Please describe the issue you encountered:");
+            string userDescription = readInput?.Invoke() ?? "";
+            Message?.Invoke("Opening GitHub Issues page...");
             //string title = title;
             string body = $"Error Message: {errorMessage}\n\nStack Trace:\n{stackTrace}\n\nSidenote: {sidenote}\n\nUser Description: {userDescription}";
             string url = $"github.com/aichlou/NeuroNet/issues/new?title={Uri.EscapeDataString(title)}&body={Uri.EscapeDataString(body)}";
@@ -24,7 +24,7 @@ public static class GitHubReportIssue
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to open browser: " + ex.Message);
+                Message?.Invoke("Failed to open browser: " + ex.Message);
             }
         }
     }
@@ -35,6 +35,12 @@ public class MultipleValues<T>
     public T? Value { get; set; }
     public bool HasError { get; set; }
     public string? ErrorMessage { get; set; }
+}
+
+public class TwoValues<T1, T2>
+{
+    public T1? Value1 { get; set; }
+    public T2? Value2 { get; set; }
 }
 
 public class NeuronValues<T>

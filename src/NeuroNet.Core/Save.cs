@@ -2,12 +2,12 @@ using System.Text.Json;
 
 namespace NeuroNet.Core;
 
-class Save
+public class Save
 {
     static string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     static string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
 
-    public static void SaveNetworkToFile(string nnName, string jsonData)
+    public static void SaveNetworkToFile(string nnName, string jsonData, Action<string>? Message = null)
     {
         if (!Directory.Exists(appDataPath))
         {
@@ -15,28 +15,28 @@ class Save
         }
         string filePath = Path.Combine(appDataPath, nnName + ".nn");
         File.WriteAllText(filePath, jsonData);
-        Console.WriteLine("Neural Network saved as " + nnName);
+        Message?.Invoke("Neural Network saved as " + nnName);
     }
 
-    public static void SaveNetwork(string nnName, List<List<Neuron>> network, string status)
+    public static void SaveNetwork(string nnName, List<List<Neuron>> network, string status, Action<string>? Message = null)
     {
         if (status == "new" && File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
         {
-            Console.WriteLine("Neural Network already exists. Do you want to overwrite it? (y/n)");
+            Message?.Invoke("Neural Network already exists. Do you want to overwrite it? (y/n)");
             string overwriteChoice = Console.ReadLine() ?? "n";
             if (overwriteChoice.ToLower() != "y")
             {
-                Console.WriteLine("Neural Network not saved.");
+                Message?.Invoke("Neural Network not saved.");
                 return;
             }
         }
         if (status == "overwrite" && File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
         {
-            Console.WriteLine("Overwriting existing Neural Network: " + nnName);
+            Message?.Invoke("Overwriting existing Neural Network: " + nnName);
         }
         if (status == "overwrite" && !File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
         {
-            Console.WriteLine("Neural Network does not exist. Saving as new Neural Network: " + nnName);
+            Message?.Invoke("Neural Network does not exist. Saving as new Neural Network: " + nnName);
             GitHubReportIssue.ReportToGitHub(
                 "Attempted to overwrite a non-existing Neural Network.",
                 "",
@@ -52,16 +52,15 @@ class Save
             foreach(var neuron in layer)
             {
                 dtoLayer.Add(neuron.ToDto());
-                //Console.WriteLine($"Debug: Created Neuron DTO");
             }
             dtoNetwork.Add(dtoLayer);
         }
         string contentJson = JsonSerializer.Serialize(dtoNetwork);
-        Console.WriteLine($"Debug: JSON Original: {JsonSerializer.Serialize(network)}");
-        Console.WriteLine($"Debug: Content JSON: {contentJson}");
+        Message?.Invoke($"Debug: JSON Original: {JsonSerializer.Serialize(network)}");
+        Message?.Invoke($"Debug: Content JSON: {contentJson}");
         string baseDir = AppContext.BaseDirectory;
-        Console.WriteLine($"Debug: Base Directory: {baseDir}");
-        string appVersionPath = Path.Combine(baseDir, "../../../../AppVersion.json"); //Maybee add another ../
+        Message?.Invoke($"Debug: Base Directory: {baseDir}");
+        string appVersionPath = Path.Combine(baseDir, "../../../../AppVersion.json");
         string versionInfo =
                 JsonSerializer
                     .Deserialize<Dictionary<string, string>>(
