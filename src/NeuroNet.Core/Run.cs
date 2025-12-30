@@ -1,10 +1,12 @@
+using System.Reflection.Metadata.Ecma335;
 using static NeuroNet.Core.Edit;
 namespace NeuroNet.Core;
 
 public class Run
 {
-    public static void RunNeuralNetwork(List<List<Neuron>> network, List<double> inputData, Action<string>? Message)
+    public static double[] RunNeuralNetwork(List<List<Neuron>> network, List<double> inputData, Action<string>? Message)
     {
+        
         if (network == null) throw new ArgumentNullException(nameof(network));
         if (inputData == null) throw new ArgumentNullException(nameof(inputData));
         if (network.Count == 0) throw new ArgumentException("Network cannot be empty.", nameof(network));
@@ -28,10 +30,13 @@ public class Run
                 }
             }
         }
+        double[] output = new double[lastLayer.Count];
         Message?.Invoke("Neural Network Output:");
         for (int j = 0; j < lastLayer.Count; j++)
         {
-            Message?.Invoke($"Neuron {j + 1}: {lastLayer[j].value}");
+            output[j] = lastLayer[j].value;
+            Message?.Invoke($"Neuron {j + 1}: {output[j]}");
         }
+        return output;
     }
 }

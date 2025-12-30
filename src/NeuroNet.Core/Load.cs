@@ -1,5 +1,6 @@
 
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 namespace NeuroNet.Core;
 
@@ -8,19 +9,20 @@ public class Load {
     static readonly string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     static readonly string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
 
-    public static MultipleValues<List<List<Neuron>>> LoadNeuralNetwork(Action<string>? Message = null, Func<string>? readInput = null)
+    public static MultipleValues<TwoValues<List<List<Neuron>>, string?>> LoadNeuralNetwork(Action<string>? Message = null, Func<string>? readInput = null)
     {
         Message?.Invoke("Loading Neural Network...");
         ListSavedNetworks(Message);
         Message?.Invoke("Please type in the name of the Neural Network you would like to load:");
         string? nnName = readInput?.Invoke();
-        string networkData = Nameof(nnName, Message);
+        nnName = NameOf(nnName, Message);
+        string networkData = ContentOf(nnName, Message);
         if (string.IsNullOrEmpty(networkData))
         {
             Message?.Invoke("Failed to load Neural Network.");
-            return new MultipleValues<List<List<Neuron>>>
+            return new MultipleValues<TwoValues<List<List<Neuron>>, string?>>
             {
-                Value = null!,
+                Value = new TwoValues<List<List<Neuron>>, string?> { Value1 = null},
                 HasError = true,
                 ErrorMessage = "Failed to load Neural Network."
             };
@@ -28,16 +30,16 @@ public class Load {
         List<List<NeuronDto>>? networkDto;
         try
         {
-            var file = JsonSerializer.Deserialize<FileDto>(networkData) ?? throw new Exception("Deserialized file is null."); // I don't like this but it works for now
+            var file = JsonSerializer.Deserialize<FileDto>(networkData) ?? throw new Exception("Deserialized file is null.");
             networkDto = file.Network;
         }
         catch (Exception e)
         {
             Message?.Invoke("An Error occurred while deserializing the Neural Network.");
             GitHubReportIssue.ReportToGitHub("Failed to Load Neural Network", e.Message, e.StackTrace ?? "No stack trace available.", "Deserialization Error in LoadNeuralNetwork", true, Message, readInput);
-            return new MultipleValues<List<List<Neuron>>>
+            return new MultipleValues<TwoValues<List<List<Neuron>>, string?>>
             {
-                Value = null!,
+                Value = new TwoValues<List<List<Neuron>>, string?> {Value1 = null!},
                 HasError = true,
                 ErrorMessage = "Deserialization Error."
             };
@@ -47,7 +49,7 @@ public class Load {
         if (network == null)
         {
             Message?.Invoke("Failed to convert Neural Network DTO to Neurons.");
-            return new MultipleValues<List<List<Neuron>>>
+            return new MultipleValues<TwoValues<List<List<Neuron>>, string?>>
             {
                 Value = null!,
                 HasError = true,
@@ -73,9 +75,9 @@ public class Load {
         {
             Message?.Invoke("Layer with " + layer.Count + " neurons.");
         }
-        return new MultipleValues<List<List<Neuron>>>
+         return new MultipleValues<TwoValues<List<List<Neuron>>, string?>>
         {
-            Value = network,
+            Value = new TwoValues<List<List<Neuron>>, string?> { Value1 = network, Value2 = nnName},
             HasError = false,
             ErrorMessage = string.Empty
         };
@@ -111,7 +113,29 @@ public class Load {
         }
     }
 
-        public static string Nameof(string? nnName, Action<string>? Message = null)
+    public static string ContentOf(string? nnName, Action<string>? Message = null)
+    {
+        string filePath = Path.Combine(appDataPath, nnName + ".nn");
+        if (File.Exists(filePath))
+        {
+            try {
+            return File.ReadAllText(filePath);
+            }
+            catch(Exception e)
+            {
+                Message?.Invoke("An error occurred while reading the Neural Network file.");
+                GitHubReportIssue.ReportToGitHub("Failed to Read Neural Network File", e.Message, e.StackTrace ?? "No stack trace available.", "File Read Error in Nameof", true, Message, null);
+                return string.Empty;
+            }
+        }
+        else
+        {
+            Message?.Invoke("Neural Network file not found: " + nnName);
+            return string.Empty;
+        }
+    }
+
+    public static string NameOf(string? nnName, Action<string>? Message = null)
     {
         if (string.IsNullOrEmpty(nnName))
         {
@@ -146,24 +170,7 @@ public class Load {
             return string.Empty;
         }
 
-        string filePath = Path.Combine(appDataPath, nnName + ".nn");
-        if (File.Exists(filePath))
-        {
-            try {
-            return File.ReadAllText(filePath);
-            }
-            catch(Exception e)
-            {
-                Message?.Invoke("An error occurred while reading the Neural Network file.");
-                GitHubReportIssue.ReportToGitHub("Failed to Read Neural Network File", e.Message, e.StackTrace ?? "No stack trace available.", "File Read Error in Nameof", true, Message, null);
-                return string.Empty;
-            }
-        }
-        else
-        {
-            Message?.Invoke("Neural Network file not found: " + nnName);
-            return string.Empty;
-        }
+        return nnName;
     }
 
     public class FileDto

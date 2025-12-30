@@ -11,7 +11,6 @@ internal class Program
         string currentnnName = "MyNeuralNetwork";
         do
         {
-            
             Error = false;
             Console.Clear();
             Console.WriteLine("Neural Network Demo");
@@ -38,8 +37,8 @@ internal class Program
                     }
                     else
                     {
-                        LoadedNetwork = result.Value;
-                        //Todo: Define currentnnName from loaded file name
+                        LoadedNetwork = (result.Value ?? throw new Exception("Network and network name cannot be null")).Value1 ?? throw new Exception("Network cannot be null");
+                        currentnnName = result.Value.Value2 ?? throw new Exception("Network name cannot be null");
                     }
                     break;
                 default:
@@ -67,49 +66,9 @@ internal class Program
         Console.WriteLine("Do you want to run the Neural Network now? (y/n)");
         if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
         {
-            List<double> inputData = new List<double>();
-            if(LoadedNetwork == null)
-            {
-                Console.WriteLine("No Neural Network loaded. Exiting...");
-                return;
-            }
-            int InputLength = LoadedNetwork[0].Count;
-            do {
-                Error = false;
-                Console.WriteLine($"You have to Input {InputLength} Values.");
-                Console.WriteLine("Please enter input data separated by commas (e.g., 0.5,0.2,0.8):");
-                string? inputLine = Console.ReadLine();
-                if (!string.IsNullOrEmpty(inputLine))
-                {
-                    try {
-                        inputData = inputLine.Split(',').Select(s => double.Parse(s.Trim())).ToList();
-                        if(inputData.Count != InputLength)
-                        {
-                            Console.WriteLine($"Invalid number of inputs. Expected {InputLength} values.");
-                            Console.WriteLine($"You entered {inputData.Count} values.");
-                            Console.Write("Press any key to continue...");
-                            Console.ReadKey();
-                            Error = true;
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        Console.WriteLine("Invalid input format. Please ensure you enter numbers separated by commas.");
-                        Console.Write("Press any key to continue...");
-                        Console.ReadKey();
-                        Error = true;
-                    }
-                }
-                else
-                {
-                    string defaultInput = string.Join(",", Enumerable.Repeat("0.0", InputLength));
-                    Console.WriteLine("No input data provided. Using default input data: " + defaultInput);
-                    inputData = new List<double>(Enumerable.Repeat(0.0, InputLength));
-                }
-            }
-            while(Error);
-            Console.WriteLine("Running Neural Network...");
-            Run.RunNeuralNetwork(LoadedNetwork!, inputData, (message) => Console.WriteLine(message));
+            double[] output = Run.Run_Network(LoadedNetwork).Value ?? new double[0];
+            //Console.WriteLine($"Debug: This are the Values in one Array: {output}");
+            
         }
         Console.WriteLine("Exiting Program...");
         Extras.PressKey();
