@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace NeuroNet.Core;
 
 public class Learn {

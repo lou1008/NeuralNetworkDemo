@@ -138,7 +138,7 @@ public class Load {
         }
     }
 
-    public static string NameOf(string? nnName, Action<string>? Message = null)
+    public static string NameOf(string? nnName, Action<string>? Message = null) //Returns the Name of a File (in the App Data Path) if it exists based on the name or a number
     {
         if (string.IsNullOrEmpty(nnName))
         {
@@ -175,6 +175,32 @@ public class Load {
 
         return nnName;
     }
+
+    public static double[,] GetCSVData(string path)
+    {
+        var lines = File.ReadAllLines(path);
+        var rows = new List<double[]>();
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            var values = line.Split(';')
+                            .Select(v => double.Parse(v, CultureInfo.InvariantCulture))
+                            .ToArray();
+
+            rows.Add(values);
+        }
+        double[,] fields = new double[rows.Count(), lines.Count()];
+        for(int i = 0; i < rows.Count(); i++)
+        {
+            for(int j = 0; i < lines.Count(); i++)
+            {
+                fields[i,j] = rows[i][j];
+            }
+        }
+        return fields;
+    }
+
+
 
     public class FileDto
     {
