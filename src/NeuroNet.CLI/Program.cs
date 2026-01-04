@@ -4,7 +4,7 @@ namespace NeuroNet.CLI;
 
 internal class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         int UserOutput;
         bool Error;
@@ -27,7 +27,7 @@ internal class Program
             {
                 case 1:
                     LoadedNetwork = CreateCLI.CreatingProcess() ?? throw new Exception("Loaded Network cannot be null");
-                    currentnnName = SaveCLI.SaveNetworkToFile(LoadedNetwork);
+                    currentnnName = SaveCLI.SaveNetworkToFile(LoadedNetwork, "new");
                     break;
                 case 2:
                     var result = NeuroNet.Core.Load.LoadNeuralNetwork(Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
@@ -54,7 +54,8 @@ internal class Program
             Console.WriteLine("Do you want to save randomized weights and biases? (y/n)");
             if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
             {
-                Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine);
+                SaveCLI.SaveNetworkToFile(LoadedNetwork!, "overwrite", currentnnName);
+                //Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine);
             }
             else
             {

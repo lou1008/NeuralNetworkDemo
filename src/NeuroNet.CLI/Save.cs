@@ -4,27 +4,49 @@ namespace NeuroNet.CLI;
 
 class SaveCLI
 {
-    public static string SaveNetworkToFile(List<List<Neuron>> network)
+    public static string SaveNetworkToFile(List<List<Neuron>> network, string status, string? currentnnName = null)
     {
         Console.WriteLine("Do you want to save this Neural Network? (y/n)");
         string saveResponse = Console.ReadLine() ?? string.Empty;
         string nnName;
         if(saveResponse.ToLower() == "y")
         {
-            Console.WriteLine("How do you name the Neural Network?");
-            do
-            {
-                Console.WriteLine("Please name your Network Properly");
-                nnName = Console.ReadLine()!;
+            switch (status) {
+                case "new":
+                    Console.WriteLine("How do you name the Neural Network?");
+                    do
+                    {
+                        Console.WriteLine("Please name your Network Properly");
+                        nnName = Console.ReadLine()!;
+                    }
+                    while (string.IsNullOrWhiteSpace(nnName));
+                    var invalidChars = Path.GetInvalidFileNameChars();
+                    foreach (var c in invalidChars)
+                    {
+                        nnName = nnName.Replace(c, '_');
+                    }
+                    break;
+                case "override":
+                    nnName = currentnnName ?? throw new Exception("No current Network loaded");
+                    break;
+                default:
+                    Console.WriteLine("Something went wrong. Please report an Issue on GitHub and restart the program");
+                    throw new Exception();
             }
-            while (string.IsNullOrWhiteSpace(nnName));
-            var invalidChars = Path.GetInvalidFileNameChars();
-            foreach (var c in invalidChars)
+            string Message = Save.SaveNetwork(nnName, network, status, Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
+            switch(Message)
             {
-                nnName = nnName.Replace(c, '_');
+                case "done":
+                    Console.WriteLine("Neural Network successfully saved as " + nnName);
+                    break;
+                case "already existing":
+                    break;
+                default:
+                    Console.WriteLine("An error occured. Please Report the Issue on GitHub.");
+                    
+                    break;
             }
-            Save.SaveNetwork(nnName, network, "new", Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
-            Console.WriteLine("Neural Network saved as " + nnName); //Todo: Add Error Message to Function above
+            
             return nnName;
         }
         else

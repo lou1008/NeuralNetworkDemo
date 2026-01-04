@@ -66,8 +66,17 @@ public class CreateCLI
                 }
                 else if(neuronCount > 100000)
                 {
-                    Console.WriteLine("The maximum number of neurons per layer is 100000. Please enter a valid number.");
-                    Error = true;
+                    Console.WriteLine("The maximum number of neurons per layer is 100000. Defaulting to 1000000? (y/n)");
+                    string response = Console.ReadLine() ?? string.Empty;
+                    if(response.ToLower() == "y") {
+                        Console.WriteLine("Confirmed");
+                        neuronCount = 1; 
+                    }
+                    else {
+                        Console.WriteLine("Not Confirmed");
+                        Console.WriteLine("Please enter a valid number for the neurons in layer " + (i + 1) );
+                        Error = true;
+                    }
                 }
                 else
                 {

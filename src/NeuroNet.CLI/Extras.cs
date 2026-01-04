@@ -15,4 +15,5 @@ public class Extras
             Console.Read(); //This is to prevent errors when input is redirected
         }
     }
+    
 }
