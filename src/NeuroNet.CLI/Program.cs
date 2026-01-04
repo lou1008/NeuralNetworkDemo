@@ -26,9 +26,8 @@ internal class Program
             switch (UserOutput)
             {
                 case 1:
-                    var OutputCreate = Create.CreateNeuralNetwork(() => Console.ReadLine() ?? string.Empty, Console.WriteLine);
-                    LoadedNetwork = OutputCreate.Value1  ?? throw new Exception("Loaded Network cannot be null");
-                    currentnnName = OutputCreate.Value2 ?? "MyNeuralNetwork";
+                    LoadedNetwork = CreateCLI.CreatingProcess() ?? throw new Exception("Loaded Network cannot be null");
+                    currentnnName = SaveCLI.SaveNetworkToFile(LoadedNetwork);
                     break;
                 case 2:
                     var result = NeuroNet.Core.Load.LoadNeuralNetwork(Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
