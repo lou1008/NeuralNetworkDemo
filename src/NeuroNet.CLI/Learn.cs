@@ -1,11 +1,15 @@
+using System.Data;
+using NeuroNet.Core;
 using static NeuroNet.Core.Load;
 namespace NeuroNet.CLI;
 
 
 public class Learn
 {
-    public static void UserDialoge()
+    public static void UserDialoge(List<List<Neuron>> network)
     {
+        network = network 
+        ?? throw new ArgumentNullException(nameof(network));
         bool Error;
         do {
             Error = false;
@@ -37,8 +41,29 @@ public class Learn
             else
             {
                 double[,] Data = GetCSVData(path);
-                //Todo: Check if the File is a vald File
-                //Todo: Convert the double[rows,lines] to double[dataset,input/output,entry]
+                double[,,] dataSet = SortDataset(Data); //Converts the double[rows,lines] to double[dataset,input/output,entry]
+                if(dataSet.GetLength(0) == 0 && dataSet.GetLength(1) == 0 && dataSet.GetLength(2) == 0) {
+                    Console.WriteLine("The File is broken...");
+                    Error = true;
+                    Extras.PressKey();
+                }
+                else
+                { //Das sollte in .Core (Also der Lern Block)
+                    
+                    for (int i = 0; i < dataSet.GetLength(0); i++)
+                    {
+                        double[] input = new double[dataSet.GetLength(2)];
+                        double[] expected_output = new double[dataSet.GetLength(2)];
+                        for (int j = 0; j < dataSet.GetLength(2); i++)
+                        {
+                            input[j] = dataSet[i, 1, j];
+                            expected_output[j] = dataSet[i, 2, j];
+
+                        }
+                        double[] output = NeuroNet.Core.Run.RunNeuralNetwork(network, input.ToList(), (message) => Console.WriteLine(message));
+                        NeuroNet.Core.Learn.Learning(network, input, expected_output);
+                    }
+                }
             }
         } while (Error) ;
     }

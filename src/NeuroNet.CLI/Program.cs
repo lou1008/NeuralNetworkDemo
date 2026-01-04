@@ -1,4 +1,5 @@
-﻿using NeuroNet.Core;
+﻿using System.Net.NetworkInformation;
+using NeuroNet.Core;
 namespace NeuroNet.CLI;
 
 internal class Program
@@ -26,7 +27,7 @@ internal class Program
             {
                 case 1:
                     var OutputCreate = Create.CreateNeuralNetwork(() => Console.ReadLine() ?? string.Empty, Console.WriteLine);
-                    LoadedNetwork = OutputCreate.Value1;
+                    LoadedNetwork = OutputCreate.Value1  ?? throw new Exception("Loaded Network cannot be null");
                     currentnnName = OutputCreate.Value2 ?? "MyNeuralNetwork";
                     break;
                 case 2:
@@ -54,7 +55,7 @@ internal class Program
             Console.WriteLine("Do you want to save randomized weights and biases? (y/n)");
             if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
             {
-                Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine); // Hardcoded name for testing
+                Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine);
             }
             else
             {
@@ -77,10 +78,11 @@ internal class Program
             }
             else
             {
+                LoadedNetwork = LoadedNetwork?? throw new Exception("Loaded Netwok cannot be null");
                 switch(UserOutput)
                 {
                     case 1:
-                        double[] output = Run.Run_Network(LoadedNetwork).Value ?? throw new Exception("Loaded Network cannot be null");
+                        double[]? output = Run.Run_Network(LoadedNetwork).Value  ?? throw new Exception("Network Output cannot be null");
                         for(int i = 0; i <= output.Length; i++)
                         {
                             Console.WriteLine($"Neuron {i + 1}: {output[i]}");
@@ -88,7 +90,7 @@ internal class Program
                         break;
                     case 2:
                         Console.WriteLine("This feature is in the working process...");
-                        Learn.UserDialoge();
+                        Learn.UserDialoge(LoadedNetwork);
                         break;
                     default:
                         Console.WriteLine("Please insert one of the shown Options");

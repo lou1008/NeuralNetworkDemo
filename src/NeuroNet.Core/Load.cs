@@ -199,7 +199,29 @@ public class Load {
         }
         return fields;
     }
-
+    
+    public static double[,,] SortDataset(double[,] data) //Im sure that this contains 1000 Errors but AHHHHHH
+    {
+        int datasets;
+        int lines_Length = data.GetLength(1);
+        try {
+            datasets = data.GetLength(0) / 2;
+        }
+        catch (Exception)
+        {
+            return new double[0,0,0];
+        }
+        double[,,] output = new double[datasets, 2, lines_Length];
+        for(int i = 0; i < datasets; i++)
+        {
+            for(int j = 0; j < lines_Length; i++)
+            {
+                output[i, 0, j] = data[i * 2 - 1, j];
+                output[i, 1, j] = data[i * 2, j];
+            }
+        }
+        return output;
+    }
 
 
     public class FileDto
