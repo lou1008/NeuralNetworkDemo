@@ -16,8 +16,8 @@ class SaveCLI
                     Console.WriteLine("How do you name the Neural Network?");
                     do
                     {
-                        Console.WriteLine("Please name your Network Properly");
                         nnName = Console.ReadLine()!;
+                        if(string.IsNullOrEmpty(nnName)) Console.WriteLine("Please name your Network Properly");
                     }
                     while (string.IsNullOrWhiteSpace(nnName));
                     var invalidChars = Path.GetInvalidFileNameChars();

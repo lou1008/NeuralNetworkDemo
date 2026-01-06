@@ -19,7 +19,6 @@ public class Run
                 };
             }
             int InputLength = LoadedNetwork[0].Count;
-            Console.WriteLine("This is a demo version, thats why I force you now to let the Network learn");
             do {
                 Error = false;
                 Console.WriteLine($"You have to Input {InputLength} Values.");

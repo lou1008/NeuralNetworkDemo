@@ -47,24 +47,10 @@ internal class Program
                     break;
             }
         } while (Error);
+        if (LoadedNetwork is null) throw new InvalidOperationException("LoadedNetwork must not be null here");
 
         Extras.PressKey();
-        bool wasRandomized = Edit.RandomizeIfNeeded(LoadedNetwork!, (message) => Console.WriteLine(message));
-        if (wasRandomized) {
-            Console.WriteLine("Do you want to save randomized weights and biases? (y/n)");
-            if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
-            {
-                SaveCLI.SaveNetworkToFile(LoadedNetwork!, "overwrite", currentnnName);
-                //Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine);
-            }
-            else
-            {
-                Console.WriteLine("Neural Network changes not saved.");
-                Console.WriteLine("If you do something with the Network in this session, you will do it with the randomized weights and biases, but they won't be saved.");
-                Console.WriteLine("Continuing without saving...");
-                Extras.PressKey();
-            }
-        }
+        LoadedNetwork = EditCLI.RandomizeIfNeeded(LoadedNetwork, currentnnName);
         UserOutput = 0;
         do {
             Error = false;
@@ -82,7 +68,7 @@ internal class Program
                 switch(UserOutput)
                 {
                     case 1:
-                        double[]? output = Run.Run_Network(LoadedNetwork).Value  ?? throw new Exception("Network Output cannot be null");
+                        double[]? output = Run.Run_Network(LoadedNetwork).Value  ?? throw new Exception("Network Output cannot be null"); //No Error handeling
                         for(int i = 0; i <= output.Length; i++)
                         {
                             Console.WriteLine($"Neuron {i + 1}: {output[i]}");
