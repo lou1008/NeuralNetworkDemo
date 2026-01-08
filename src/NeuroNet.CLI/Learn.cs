@@ -60,7 +60,7 @@ public class Learn
                             expected_output[j] = dataSet[i, 2, j];
 
                         }
-                        double[] output = NeuroNet.Core.Run.RunNeuralNetwork(network, input.ToList(), (message) => Console.WriteLine(message));
+                        double[] output = NeuroNet.Core.Run.RunNeuralNetwork(network, input.ToList());
                         NeuroNet.Core.Learn.Learning(network, input, expected_output);
                     }
                 }

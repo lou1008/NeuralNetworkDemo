@@ -1,11 +1,11 @@
 namespace NeuroNet.Core;
 
 public class Create {
-    public static List<List<Neuron>> CreateNeuralNetwork(int[] networkData, Func<string> readInput, Action<string>? Message = null) //Creates a Neural Network based on user input
+    public static List<List<Neuron>> CreateNeuralNetwork(int[] networkData) //Creates a Neural Network based on user input
     {
         string baseDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         string appDataPath = Path.Combine(baseDataPath, "NeuroNet");
-        int layers = 0;  
+        int layers = networkData.Length;  
         List<List<Neuron>> network = new List<List<Neuron>>();
         for (int i = 0; i < layers; i++) 
         {

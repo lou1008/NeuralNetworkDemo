@@ -85,7 +85,7 @@ public class CreateCLI
             } while (Error);
         }
         Console.WriteLine("Creating Neural Network...");
-        List<List<Neuron>> network = Create.CreateNeuralNetwork(networkData ,() => Console.ReadLine() ?? string.Empty, Console.WriteLine);
+        List<List<Neuron>> network = Create.CreateNeuralNetwork(networkData);
         Console.WriteLine("Neural Network created with " + layers + " layers.");
         return network;
     }

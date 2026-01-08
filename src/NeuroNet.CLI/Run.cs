@@ -36,6 +36,14 @@ public class RunCLI
                             Console.ReadKey();
                             Error = true;
                         }
+                        /*else
+                        {
+                            Console.WriteLine("Inputs:");
+                            foreach (double item in inputData)
+                            {
+                                Console.WriteLine(item);
+                            }
+                        } */
                     }
                     catch (FormatException)
                     {
@@ -54,7 +62,7 @@ public class RunCLI
             }
             while(Error);
             Console.WriteLine("Running Neural Network...");
-            double[] output = NeuroNet.Core.Run.RunNeuralNetwork(LoadedNetwork!, inputData, (message) => Console.WriteLine(message));
+            double[] output = NeuroNet.Core.Run.RunNeuralNetwork(LoadedNetwork!, inputData);
             for (int j = 0; j < output.Length; j++)
             {
                 output[j] = output[j];
