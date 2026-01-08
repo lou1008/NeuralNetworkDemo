@@ -37,6 +37,10 @@ public class Run
                 }
             }
         }
+        for (int i = 0; i < lastLayer.Count; i++)
+        {
+            networkoutput[i] = outputs[network.Count() - 1, i];
+        }
         return networkoutput;
     }
 }

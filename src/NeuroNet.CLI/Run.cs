@@ -66,7 +66,6 @@ public class RunCLI
             for (int j = 0; j < output.Length; j++)
             {
                 output[j] = output[j];
-                Console.WriteLine($"Output {j}: {output[j]}");
             }
 
             return new MultipleValues<double[]>
