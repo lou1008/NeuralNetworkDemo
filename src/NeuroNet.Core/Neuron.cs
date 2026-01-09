@@ -28,8 +28,8 @@ public class Neuron
             totalInput += inputs[i] * weights[i];
         }
 
-        value = Sigmoid(totalInput);
-        return value;
+        this.value = Sigmoid(totalInput);
+        return this.value;
     }
     public void RandomizeWeights(Random rand, double minValue = -1.0, double maxValue = 1.0)
     {
@@ -58,7 +58,7 @@ public class Neuron
 
 public class NeuronDto
 {
-    public string type { get; set; } = "default";
+    public string type { get; set; } = "sigmoid";
     public double? bias { get; set; }
     public double[]? weights { get; set; }
 

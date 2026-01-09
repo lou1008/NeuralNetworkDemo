@@ -1,9 +1,10 @@
-﻿using NeuroNet.Core;
+﻿using System.Net.NetworkInformation;
+using NeuroNet.Core;
 namespace NeuroNet.CLI;
 
 internal class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         int UserOutput;
         bool Error;
@@ -11,7 +12,6 @@ internal class Program
         string currentnnName = "MyNeuralNetwork";
         do
         {
-            
             Error = false;
             Console.Clear();
             Console.WriteLine("NeuroNet");
@@ -26,20 +26,20 @@ internal class Program
             switch (UserOutput)
             {
                 case 1:
-                    var OutputCreate = Create.CreateNeuralNetwork(() => Console.ReadLine() ?? string.Empty, Console.WriteLine);
-                    LoadedNetwork = OutputCreate.Value1;
-                    currentnnName = OutputCreate.Value2 ?? "MyNeuralNetwork";
+                    LoadedNetwork = CreateCLI.CreatingProcess() ?? throw new Exception("Loaded Network cannot be null");
+                    currentnnName = SaveCLI.SaveNetworkToFile(LoadedNetwork, "new");
                     break;
                 case 2:
-                    var result = Load.LoadNeuralNetwork(Console.WriteLine, () => Console.ReadLine() ?? string.Empty);
+                    var result = LoadCLI.LoadNeuralNetwork();
                     if (result.HasError)
                     {
                         Error = true;
+                        Extras.PressKey();
                     }
                     else
                     {
-                        LoadedNetwork = result.Value;
-                        //Todo: Define currentnnName from loaded file name
+                        LoadedNetwork = (result.Value ?? throw new Exception("Network and network name cannot be null")).Value1 ?? throw new Exception("Network cannot be null");
+                        currentnnName = result.Value.Value2 ?? throw new Exception("Network name cannot be null");
                     }
                     break;
                 default:
@@ -48,70 +48,56 @@ internal class Program
                     break;
             }
         } while (Error);
+        if (LoadedNetwork is null) throw new InvalidOperationException("LoadedNetwork must not be null here");
 
         Extras.PressKey();
-        Edit.RandomizeIfNeeded(LoadedNetwork!, (message) => Console.WriteLine(message));
-        Console.WriteLine("Do you want to save randomized weights and biases? (y/n)");
-        if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
-        {
-            Save.SaveNetwork(currentnnName, LoadedNetwork!, "overwrite", Console.WriteLine); // Hardcoded name for testing
-        }
-        else
-        {
-            Console.WriteLine("Neural Network changes not saved.");
-            Console.WriteLine("If you do something with the Network in this session, you will do it with the randomized weights and biases, but they won't be saved.");
-            Console.WriteLine("Continuing without saving...");
+        LoadedNetwork = EditCLI.RandomizeIfNeeded(LoadedNetwork, currentnnName);
+        UserOutput = 0;
+        do {
+            Error = false;
+            Console.WriteLine();
+            Console.WriteLine("What do you want to do?");
+            Console.WriteLine("1. Run the Neural Network");
+            Console.WriteLine("2. Let the Neural Network learn");
+            if (!int.TryParse(Console.ReadLine(), out UserOutput))
+            {
+                Console.WriteLine("Please type in a valid number");
+                Error = true;
+            }
+            else
+            {
+                LoadedNetwork = LoadedNetwork?? throw new Exception("Loaded Netwok cannot be null");
+                switch(UserOutput)
+                {
+                    case 1:
+                        double[]? output = RunCLI.Run_Network(LoadedNetwork).Value  ?? throw new Exception("Network Output cannot be null"); //No Error handeling
+                        for(int i = 0; i < output.Length; i++)
+                        {
+                            Console.WriteLine($"Neuron {i + 1}: {output[i]}");
+                        }
+                        break;
+                    case 2:
+                        Console.WriteLine("This feature is in the working process...");
+                        Console.WriteLine("CAREFUL: This feature isn't working yet");
+                        try {
+                            Learn.UserDialoge(LoadedNetwork);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine($"You Exited the Learning Process with the Exception {e.Data}");
+                        }
+                        Console.WriteLine("You Exited the Learning Process Sucessfully");
+                        break;
+                    default:
+                        Console.WriteLine("Please insert one of the shown Options");
+                        Error = true;
+                        break;
+                }
+            }
+            Console.WriteLine("Exiting Program...");
             Extras.PressKey();
         }
-
-        Console.WriteLine("Do you want to run the Neural Network now? (y/n)");
-        if((Console.ReadLine() ?? string.Empty).ToLower() == "y")
-        {
-            List<double> inputData = new List<double>();
-            if(LoadedNetwork == null)
-            {
-                Console.WriteLine("No Neural Network loaded. Exiting...");
-                return;
-            }
-            int InputLength = LoadedNetwork[0].Count;
-            do {
-                Error = false;
-                Console.WriteLine($"You have to Input {InputLength} Values.");
-                Console.WriteLine("Please enter input data separated by commas (e.g., 0.5,0.2,0.8):");
-                string? inputLine = Console.ReadLine();
-                if (!string.IsNullOrEmpty(inputLine))
-                {
-                    try {
-                        inputData = inputLine.Split(',').Select(s => double.Parse(s.Trim())).ToList();
-                        if(inputData.Count != InputLength)
-                        {
-                            Console.WriteLine($"Invalid number of inputs. Expected {InputLength} values.");
-                            Console.WriteLine($"You entered {inputData.Count} values.");
-                            Console.Write("Press any key to continue...");
-                            Console.ReadKey();
-                            Error = true;
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        Console.WriteLine("Invalid input format. Please ensure you enter numbers separated by commas.");
-                        Console.Write("Press any key to continue...");
-                        Console.ReadKey();
-                        Error = true;
-                    }
-                }
-                else
-                {
-                    string defaultInput = string.Join(",", Enumerable.Repeat("0.0", InputLength));
-                    Console.WriteLine("No input data provided. Using default input data: " + defaultInput);
-                    inputData = new List<double>(Enumerable.Repeat(0.0, InputLength));
-                }
-            }
-            while(Error);
-            Console.WriteLine("Running Neural Network...");
-            Run.RunNeuralNetwork(LoadedNetwork!, inputData, (message) => Console.WriteLine(message));
-        }
-        Console.WriteLine("Exiting Program...");
-        Extras.PressKey();
+        while (Error);
     }
 }

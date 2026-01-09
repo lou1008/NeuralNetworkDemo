@@ -17,34 +17,16 @@ public class Save
         File.WriteAllText(filePath, jsonData);
     }
 
-    public static void SaveNetwork(string nnName, List<List<Neuron>> network, string status, Action<string>? Message = null, Func<string>? readInput = null)
+    public static string SaveNetwork(string nnName, List<List<Neuron>> network, string status, Action<string>? Message = null, Func<string>? readInput = null)
     {
         if (status == "new" && File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
         {
-            Message?.Invoke("Neural Network already exists. Do you want to overwrite it? (y/n)");
-            string overwriteChoice = readInput?.Invoke() ?? "n";
-            if (overwriteChoice.ToLower() != "y")
-            {
-                Message?.Invoke("Neural Network not saved.");
-                return;
-            }
-        }
-        if (status == "overwrite" && File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
-        {
-            Message?.Invoke("Overwriting existing Neural Network: " + nnName);
+            Message?.Invoke("Neural Network already exists.");
+            return "already existing";
         }
         if (status == "overwrite" && !File.Exists(Path.Combine(appDataPath, nnName + ".nn")))
         {
             Message?.Invoke("Neural Network does not exist. Saving as new Neural Network: " + nnName);
-            GitHubReportIssue.ReportToGitHub(
-                "Attempted to overwrite a non-existing Neural Network.",
-                "",
-                "",
-                "The user tried to overwrite a Neural Network that does not exist.",
-                true,
-                Message, 
-                readInput
-            );
         }
         List<List<NeuronDto>> dtoNetwork = new List<List<NeuronDto>>();
         foreach(var layer in network)
@@ -87,14 +69,13 @@ public class Save
         }
         catch (Exception)
         {
-            // Fall back to Unknown Version if reading fails
             versionInfo = "Unknown Version";
         }
         var metadata = new
         {
             Name = nnName,
             Type = "Default",
-            Version = 0.1,
+            Version = 0.1, 
             Description = "A Neural Network created with NeuroNet.",
             GitHub = "https://github.com/aichlou/NeuroNet",
             VersionOfProgram = versionInfo,
@@ -112,5 +93,6 @@ public class Save
         };
         string combinedJson = JsonSerializer.Serialize(combinedData);
         SaveNetworkToFile(nnName, combinedJson, Message);
+        return "done";
     }
 }

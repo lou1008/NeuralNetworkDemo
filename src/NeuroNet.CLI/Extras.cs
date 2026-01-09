@@ -14,5 +14,7 @@ public class Extras
             Console.WriteLine("Input is redirected, Press Enter to continue...");
             Console.Read(); //This is to prevent errors when input is redirected
         }
+        Console.WriteLine();
     }
+    
 }
